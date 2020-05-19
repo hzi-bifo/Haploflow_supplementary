@@ -1,0 +1,14 @@
+library("ggplot2")
+library("ggtree")
+library("RColorBrewer")
+
+args = commandArgs(trailingOnly=TRUE)
+inp <- args[1]
+out <- args[2]
+
+tree_f <- read.tree(inp)
+samples <- read.csv("samples.tsv", sep = '\t', col.names = c("name", "nr"), header = FALSE, stringsAsFactor = FALSE)
+samples.df <- as.data.frame(samples)
+mycolors <- c(brewer.pal(name="Dark2", n = 6), brewer.pal(name="Spectral", n = 6), brewer.pal (name="Set1", n = 6))
+tree <- ggtree(tree_f) %<+% samples.df + geom_tiplab(aes(fill = factor(nr)), geom = "label") + scale_fill_manual(values = mycolors) + theme_tree2() + geom_text2(aes(subset = !isTip, label=label,x=branch)) + ggplot2::xlim(-0.1, 15)
+ggsave(out, dpi=300, width=8, height=8)
