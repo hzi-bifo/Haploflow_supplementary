@@ -13,9 +13,9 @@
 
 `conda activate virustracker`
 
-`bash ~/Documents/VirusTracker/phylogeo_discrete/preprocessing/viralPrePro.sh strains_cds.fa "acr"`
+`bash VirusTracker/phylogeo_discrete/preprocessing/viralPrePro.sh strains_cds.fa "acr"`
 
-`~/Documents/VirusTracker/phylogeo_discrete/preprocessing/software/ "NC_045512.2"`
+`VirusTracker/phylogeo_discrete/preprocessing/software/ "NC_045512.2"`
 
 \# copy samples.tsv file and create tree (optional)
 
