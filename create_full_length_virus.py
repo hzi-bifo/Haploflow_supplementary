@@ -3,6 +3,7 @@
 import sys
 import os
 import subprocess
+import math
 from sklearn.cluster import KMeans as kmeans
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,10 +24,10 @@ with open(duplication_ratio_file, 'r') as dr:
         break
 
 duplication_ratio = float(duplication_ratio)
-if duplication_ratio > 1.15:
-    nr_clusters = 2
+if duplication_ratio - math.floor(duplication_ratio) > 0.15:
+    nr_clusters = math.ceil(duplication_ratio)
 else:
-    nr_clusters = 1
+    nr_clusters = math.floor(duplication_ratio)
 min_len = 500
 seed = 1234
 
