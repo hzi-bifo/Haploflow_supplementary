@@ -302,7 +302,7 @@ for i in range(nr_clusters):
                             #print("did not perform change of %s to %s in homopolymer at pos %s for contig %s" % (orig, new, pos, nr))
                             #print("sequence is %s" % (ref[pos - 4 + js[i]: pos + 5 + js[i]]))
     with open(out_file, 'a+') as o:
-        o.write(">%s_%s\n" % (os.path.split(contig_file)[-1][:-3],i)
+        o.write(">%s_%s\n" % (os.path.split(contig_file)[-1][:-3],i))
         o.write(to_write)
         o.write('\n')
     prev_ref = to_write
