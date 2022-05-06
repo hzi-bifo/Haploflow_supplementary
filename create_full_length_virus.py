@@ -94,7 +94,7 @@ def get_covered(coords_file):
                 continue
             start = int(sep[0])
             end = int(sep[1])
-            contig = sep[-1]
+            contig = [s for s in sep if "flow" in s][0]
             c, nr, f, flow, cc, ccnr = contig.split("_") 
             if label_map[nr] == 1:
                 covered.append((start, end))
@@ -137,10 +137,10 @@ snp_map = {}
 with open(snp_file, 'r') as snps:
     for line in snps:
         snp_list = line.strip().split('\t')
-        pos = int(snp_list[0])
-        orig = snp_list[1]
-        new = snp_list[2]
-        contig = snp_list[11]
+        pos = int(snp_list[2]) #changed in latest QUAST!
+        orig = snp_list[3]
+        new = snp_list[4]
+        contig = snp_list[1]
         c, nr, f, flow, cc, ccnr = contig.split("_") 
         if pos in snp_map:
             snp_map[pos].append((nr, orig, new))
@@ -230,6 +230,7 @@ def write(to_write, ref, js, pos, new, label, prev_v, covered, indel):
             raise ValueError
     return (ret, js)
 
+# only works for SARS-CoV-2
 def strand_bias(ref, alt, pos, bam):
     proc = subprocess.Popen("samtools mpileup -f %s -r \"NC_045512.2:%s-%s\" -d 80000 %s" % (ref, pos, pos, bam), shell=True, stdout=subprocess.PIPE)
     out = proc.stdout.read()
@@ -271,8 +272,8 @@ for i in range(nr_clusters):
                         if (no_homopolymer(ref, pos, 4)):
                             #print("deleted %s at pos %s for contig %s" % (orig, pos, nr))
                             to_write, js = write(to_write, ref, js, pos, ".", label, prev, covered, 0)
-                            print(pos)
-                            print(strand_bias(reference_file, new, pos, bam))
+                            #print(pos)
+                            #print(strand_bias(reference_file, new, pos, bam))
                             prev = (pos, 0)
                         else:
                             pass
@@ -282,8 +283,8 @@ for i in range(nr_clusters):
                         if (no_homopolymer(ref, pos, 4)):
                             #print("added %s at pos %s for contig %s" % (new, pos, nr))
                             to_write, js = write(to_write, ref, js, pos, new, label, prev, covered, 1)
-                            print(pos)
-                            print(strand_bias(reference_file, new, pos, bam))
+                            #print(pos)
+                            #print(strand_bias(reference_file, new, pos, bam))
                             prev = (pos, 1)
                         else:
                             pass
@@ -293,15 +294,15 @@ for i in range(nr_clusters):
                         if (no_homopolymer(ref, pos, 4)):
                             #print("replaced %s with %s at %s for contig %s" % (orig, new, pos, nr))
                             to_write, js = write(to_write, ref, js, pos, new, label, prev, covered, 2)
-                            print(pos)
-                            print(strand_bias(reference_file, new, pos, bam))
+                            #print(pos)
+                            #print(strand_bias(reference_file, new, pos, bam))
                             prev = (pos, 2)
                         else:
                             pass
                             #print("did not perform change of %s to %s in homopolymer at pos %s for contig %s" % (orig, new, pos, nr))
                             #print("sequence is %s" % (ref[pos - 4 + js[i]: pos + 5 + js[i]]))
     with open(out_file, 'a+') as o:
-        o.write(">%s_%s|%s_%s|2020-04-01\n" % (os.path.split(contig_file)[-2],i,os.path.split(contig_file)[-2],i))
+        o.write(">%s_%s\n" % (os.path.split(contig_file)[-1][:-3],i)
         o.write(to_write)
         o.write('\n')
     prev_ref = to_write
